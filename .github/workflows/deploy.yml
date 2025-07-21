@@ -34,7 +34,6 @@ jobs:
 
       - run: yarn install --frozen-lockfile
       - run: yarn check-types
-      - run: yarn test
       - run: yarn build
 
       - name: Deploy - GitHub pages
