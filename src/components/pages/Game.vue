@@ -3,7 +3,7 @@ import Page from "../atoms/Page.vue";
 import { Button, Panel } from "primevue";
 import Card from "../molecules/Card.vue";
 import { Deck } from "../../data/deck";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
@@ -29,7 +29,10 @@ const selectedCards = ref<CardData[]>([]);
 const score = ref(0);
 const scale = ref(1);
 
-playArea.value.fill();
+onMounted(() => {
+  playArea.value.fill();
+  playSound(Sound.Paper);
+});
 
 const handleClick = (card: CardData) => {
   if (selectedCards.value.includes(card)) {
