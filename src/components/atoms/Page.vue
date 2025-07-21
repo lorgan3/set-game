@@ -8,6 +8,6 @@
 
 <style lang="scss" scoped>
 .page {
-  margin: 4em;
+  margin: 5vw 5vh;
 }
 </style>
