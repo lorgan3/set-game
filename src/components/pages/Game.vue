@@ -3,16 +3,23 @@ import Page from "../atoms/Page.vue";
 import { Button, Panel } from "primevue";
 import Card from "../molecules/Card.vue";
 import { Deck } from "../../data/deck";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
+import Timer from "../atoms/Timer.vue";
 
 enum Sound {
   Correct = "correct.mp3",
   Wrong = "wrong.wav",
   Paper = "paper.wav",
   Select = "select.wav",
+  Ding = "ding.wav",
+}
+
+enum Mode {
+  Normal,
+  Timed,
 }
 
 const playSound = (sound: Sound) => {
@@ -27,12 +34,28 @@ deck.shuffle();
 const playArea = ref(new PlayArea(deck));
 const selectedCards = ref<CardData[]>([]);
 const score = ref(0);
-const scale = ref(1);
+const mode = ref<Mode | undefined>(undefined);
+const paused = ref(true);
 
-onMounted(() => {
-  playArea.value.fill();
-  playSound(Sound.Paper);
-});
+const handleSelectMode = (newMode: Mode) => {
+  mode.value = newMode;
+  paused.value = false;
+
+  window.requestAnimationFrame(() => {
+    playArea.value.fill();
+    playSound(Sound.Paper);
+  });
+};
+
+const handleGameEnd = () => {
+  paused.value = true;
+
+  playSound(Sound.Ding);
+  toast.add({
+    summary: "Game over!",
+    severity: "info",
+  });
+};
 
 const handleClick = (card: CardData) => {
   if (selectedCards.value.includes(card)) {
@@ -60,7 +83,7 @@ const handleClick = (card: CardData) => {
       if (!playArea.value.getFirstSet() && playArea.value.cardsInDeck === 0) {
         toast.add({
           summary: "Game over!",
-          severity: "success",
+          severity: "info",
         });
       }
     } else {
@@ -133,31 +156,58 @@ const handleHint = () => {
       <Panel>
         <div class="score">
           <h3>Score {{ score }}</h3>
-          <span>Cards in deck {{ playArea.cardsInDeck }}</span>
-        </div>
-
-        <div
-          class="play-area"
-          :style="{ '--columns': playArea.width, '--scale': scale }"
-        >
-          <TransitionGroup name="cards">
-            <Card
-              v-for="data in cardPositions"
-              :key="data.card.key()"
-              :card="data.card"
-              :selected="selectedCards.includes(data.card)"
-              @click="handleClick(data.card)"
-              class="open-card"
-              :style="{ '--x': data.x, '--y': data.y }"
+          <span>
+            <Timer
+              :paused="paused"
+              :duration="mode === Mode.Timed ? 120 : 0"
+              @end="handleGameEnd"
             />
-          </TransitionGroup>
+          </span>
+          <span class="right">Cards in deck {{ playArea.cardsInDeck }}</span>
         </div>
 
-        <div class="buttons">
-          <Button @click="handleDrawMore" :disabled="playArea.cardsInDeck === 0"
-            >Draw More</Button
-          >
-          <Button @click="handleHint">Hint</Button>
+        <div v-if="mode === undefined" class="mode-select">
+          <h2>Select Mode</h2>
+          <div class="modes">
+            <div>
+              <Button @click="handleSelectMode(Mode.Normal)">Normal</Button>
+              <p>
+                Try finding all sets of 3 cards that either share have no common
+                attributes or all have the same attribute.
+              </p>
+            </div>
+            <div>
+              <Button @click="handleSelectMode(Mode.Timed)">Timed</Button>
+              <p>
+                Try finding as many sets within the time limit of 2 minutes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div v-else>
+          <div class="play-area" :style="{ '--columns': playArea.width }">
+            <TransitionGroup name="cards">
+              <Card
+                v-for="data in cardPositions"
+                :key="data.card.key()"
+                :card="data.card"
+                :selected="selectedCards.includes(data.card)"
+                @click="!paused ? handleClick(data.card) : undefined"
+                class="open-card"
+                :style="{ '--x': data.x, '--y': data.y }"
+              />
+            </TransitionGroup>
+          </div>
+
+          <div class="buttons">
+            <Button
+              @click="handleDrawMore"
+              :disabled="playArea.cardsInDeck === 0"
+              >Draw More</Button
+            >
+            <Button @click="handleHint">Hint</Button>
+          </div>
         </div>
       </Panel>
     </div>
@@ -203,6 +253,40 @@ const handleHint = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  & > * {
+    flex: 1;
+  }
+
+  .right {
+    text-align: right;
+  }
+}
+
+.mode-select {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .modes {
+    display: flex;
+    padding-top: 20px;
+    gap: 20px;
+
+    & > * {
+      flex: 1;
+    }
+
+    button {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #999;
+      font-style: italic;
+    }
+  }
 }
 
 .cards-enter-active,
