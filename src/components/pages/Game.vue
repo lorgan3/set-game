@@ -8,6 +8,17 @@ import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 
+enum Sound {
+  Correct = "/correct.mp3",
+  Wrong = "/wrong.wav",
+  Paper = "/paper.wav",
+  Select = "/select.wav",
+}
+
+const playSound = (sound: Sound) => {
+  new Audio(sound).play();
+};
+
 const toast = useToast();
 
 const deck = new Deck();
@@ -41,6 +52,7 @@ const handleClick = (card: CardData) => {
         life: 3000,
         severity: "success",
       });
+      playSound(Sound.Correct);
     } else {
       selectedCards.value = [];
       toast.add({
@@ -48,7 +60,10 @@ const handleClick = (card: CardData) => {
         life: 3000,
         severity: "error",
       });
+      playSound(Sound.Wrong);
     }
+  } else {
+    playSound(Sound.Select);
   }
 };
 
@@ -68,6 +83,8 @@ const handleDrawMore = () => {
   } else {
     playArea.value.addColumn();
   }
+
+  playSound(Sound.Paper);
 };
 
 const cardPositions = computed(() => {
