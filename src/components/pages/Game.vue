@@ -87,29 +87,33 @@ const cardPositions = computed(() => {
 <template>
   <Page>
     <h1>Set</h1>
-    <Panel>
-      <div class="score">
-        <h3>Score {{ score }}</h3>
-        <span>Cards in deck {{ playArea.cardsInDeck }}</span>
-      </div>
+    <div class="void">
+      <Panel>
+        <div class="score">
+          <h3>Score {{ score }}</h3>
+          <span>Cards in deck {{ playArea.cardsInDeck }}</span>
+        </div>
 
-      <div
-        class="play-area"
-        :style="{ '--columns': playArea.width, '--scale': scale }"
-      >
-        <Card
-          v-for="data in cardPositions"
-          :key="data.card.key()"
-          :card="data.card"
-          :selected="selectedCards.includes(data.card)"
-          @click="handleClick(data.card)"
-          class="open-card"
-          :style="{ '--x': data.x, '--y': data.y }"
-        />
-      </div>
+        <div
+          class="play-area"
+          :style="{ '--columns': playArea.width, '--scale': scale }"
+        >
+          <TransitionGroup name="cards">
+            <Card
+              v-for="data in cardPositions"
+              :key="data.card.key()"
+              :card="data.card"
+              :selected="selectedCards.includes(data.card)"
+              @click="handleClick(data.card)"
+              class="open-card"
+              :style="{ '--x': data.x, '--y': data.y }"
+            />
+          </TransitionGroup>
+        </div>
 
-      <Button @click="handleDrawMore">Draw More</Button>
-    </Panel>
+        <Button @click="handleDrawMore">Draw More</Button>
+      </Panel>
+    </div>
   </Page>
 </template>
 
@@ -128,6 +132,10 @@ const cardPositions = computed(() => {
   transform-origin: 50% 0;
 }
 
+.void {
+  overflow: hidden;
+}
+
 .open-card {
   position: absolute;
   top: 0;
@@ -143,5 +151,17 @@ const cardPositions = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.cards-enter-active,
+.cards-leave-active {
+  z-index: 1;
+  box-shadow: 1px 1px 5px 2px #444;
+}
+
+.cards-enter-from,
+.cards-leave-to {
+  translate: calc((min(100cqw, var(--max-width))) / 2 + var(--margin))
+    calc(var(--height) * 3 + 100px);
 }
 </style>
