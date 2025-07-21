@@ -80,9 +80,13 @@ export class PlayArea {
         }
       }
     }
+
+    while (!this.getFirstSet() && this.cardsInDeck > 0) {
+      this.addColumn();
+    }
   }
 
-  addColumn() {
+  private addColumn() {
     const x = this.width;
     this._width++;
 

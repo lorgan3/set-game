@@ -81,11 +81,16 @@ const handleClick = (card: CardData) => {
       playSound(Sound.Correct);
 
       if (!playArea.value.getFirstSet() && playArea.value.cardsInDeck === 0) {
+        paused.value = true;
         toast.add({
           summary: "Game over!",
           severity: "info",
         });
       }
+
+      window.setTimeout(() => {
+        playArea.value.fill();
+      }, 500);
     } else {
       selectedCards.value = [];
       score.value = Math.max(0, score.value - 1);
@@ -99,26 +104,6 @@ const handleClick = (card: CardData) => {
   } else {
     playSound(Sound.Select);
   }
-};
-
-const handleDrawMore = () => {
-  if (playArea.value.getFirstSet()) {
-    toast.add({
-      summary: "Cards in play area still contain a set!",
-      life: 3000,
-      severity: "error",
-    });
-
-    return;
-  }
-
-  if (playArea.value.cardsInPlay < PlayArea.DEFAULT_CARDS_IN_PLAY) {
-    playArea.value.fill();
-  } else {
-    playArea.value.addColumn();
-  }
-
-  playSound(Sound.Paper);
 };
 
 const cardPositions = computed(() => {
@@ -201,11 +186,6 @@ const handleHint = () => {
           </div>
 
           <div class="buttons">
-            <Button
-              @click="handleDrawMore"
-              :disabled="playArea.cardsInDeck === 0"
-              >Draw More</Button
-            >
             <Button @click="handleHint">Hint</Button>
           </div>
         </div>
