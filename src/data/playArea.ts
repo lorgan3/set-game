@@ -122,5 +122,43 @@ export class PlayArea {
     for (let card of cards) {
       this.removeCard(card);
     }
+
+    this.compact();
+  }
+
+  private compact() {
+    if (
+      this.cardsInPlay > PlayArea.DEFAULT_CARDS_IN_PLAY ||
+      this.width === PlayArea.DEFAULT_WIDTH
+    ) {
+      return;
+    }
+
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        if (!this.getCardAt(x, y)) {
+          const card = this.getOutOfBoundsCard();
+
+          if (!card) {
+            continue;
+          }
+
+          this.removeCard(card);
+          this.setCardAt(x, y, card);
+        }
+      }
+    }
+
+    this._width = Math.ceil(this.cardsInPlay / this._height);
+  }
+
+  private getOutOfBoundsCard() {
+    for (let x = PlayArea.DEFAULT_WIDTH; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        if (this.getCardAt(x, y)) {
+          return this.getCardAt(x, y);
+        }
+      }
+    }
   }
 }
