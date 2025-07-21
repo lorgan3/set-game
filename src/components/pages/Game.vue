@@ -53,6 +53,13 @@ const handleClick = (card: CardData) => {
         severity: "success",
       });
       playSound(Sound.Correct);
+
+      if (!playArea.value.getFirstSet() && playArea.value.cardsInDeck === 0) {
+        toast.add({
+          summary: "Game over!",
+          severity: "success",
+        });
+      }
     } else {
       selectedCards.value = [];
       score.value = Math.max(0, score.value - 1);
