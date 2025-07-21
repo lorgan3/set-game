@@ -9,14 +9,14 @@ import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 
 enum Sound {
-  Correct = "/correct.mp3",
-  Wrong = "/wrong.wav",
-  Paper = "/paper.wav",
-  Select = "/select.wav",
+  Correct = "correct.mp3",
+  Wrong = "wrong.wav",
+  Paper = "paper.wav",
+  Select = "select.wav",
 }
 
 const playSound = (sound: Sound) => {
-  new Audio(sound).play();
+  new Audio(`${import.meta.env.BASE_URL}${sound}`).play();
 };
 
 const toast = useToast();
