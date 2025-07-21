@@ -101,21 +101,20 @@ export class PlayArea {
     return this.area.flat().filter((card) => card !== undefined) as Card[];
   }
 
-  hasSets() {
+  getFirstSet() {
     const cards = this.getCards();
 
     for (let i = 0; i < cards.length; i++) {
       for (let j = i + 1; j < cards.length; j++) {
         for (let k = j + 1; k < cards.length; k++) {
           if (Card.isSet([cards[i], cards[j], cards[k]])) {
-            console.log({ ...cards[i] }, { ...cards[j] }, { ...cards[k] });
-            return true;
+            return [cards[i], cards[j], cards[k]];
           }
         }
       }
     }
 
-    return false;
+    return undefined;
   }
 
   removeSet(cards: Card[]) {

@@ -68,7 +68,7 @@ const handleClick = (card: CardData) => {
 };
 
 const handleDrawMore = () => {
-  if (playArea.value.hasSets()) {
+  if (playArea.value.getFirstSet()) {
     toast.add({
       summary: "Cards in play area still contain a set!",
       life: 3000,
@@ -99,6 +99,20 @@ const cardPositions = computed(() => {
 
   return cardPositions;
 });
+
+const handleHint = () => {
+  const set = playArea.value.getFirstSet();
+
+  if (set) {
+    selectedCards.value = [set[0]];
+  } else {
+    toast.add({
+      summary: "No more sets, draw some cards!",
+      life: 3000,
+      severity: "info",
+    });
+  }
+};
 </script>
 
 <template>
@@ -128,7 +142,12 @@ const cardPositions = computed(() => {
           </TransitionGroup>
         </div>
 
-        <Button @click="handleDrawMore">Draw More</Button>
+        <div class="buttons">
+          <Button @click="handleDrawMore" :disabled="playArea.cardsInDeck === 0"
+            >Draw More</Button
+          >
+          <Button @click="handleHint">Hint</Button>
+        </div>
       </Panel>
     </div>
   </Page>
@@ -151,6 +170,11 @@ const cardPositions = computed(() => {
 
 .void {
   overflow: hidden;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .open-card {
