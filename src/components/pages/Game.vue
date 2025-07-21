@@ -55,6 +55,7 @@ const handleClick = (card: CardData) => {
       playSound(Sound.Correct);
     } else {
       selectedCards.value = [];
+      score.value = Math.max(0, score.value - 1);
       toast.add({
         summary: "This was NOT a set!",
         life: 3000,
