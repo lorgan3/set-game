@@ -253,6 +253,7 @@ const handleHint = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 
   & > * {
     flex: 1;
@@ -292,7 +293,7 @@ const handleHint = () => {
 .cards-enter-active,
 .cards-leave-active {
   z-index: 1;
-  box-shadow: 1px 1px 5px 2px #444;
+  box-shadow: 1px 1px 5px 2px var(--p-button-contrast-hover-border-color);
 }
 
 .cards-enter-from,

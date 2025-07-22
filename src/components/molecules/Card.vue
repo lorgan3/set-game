@@ -21,11 +21,11 @@ defineProps<{
 
 <style lang="scss" scoped>
 .card {
-  --card-color: #f3f5eb;
+  --card-color: var(--p-panel-header-border-color);
 
   width: var(--card-width, 63px);
   height: var(--card-height, 88px);
-  border: 1px solid black;
+  border: 1px solid var(--p-button-contrast-active-border-color);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -34,15 +34,16 @@ defineProps<{
   gap: 10%;
   background-color: var(--card-color);
   cursor: pointer;
+  box-shadow: 0 0 5px -1px var(--p-button-contrast-hover-border-color);
   transition: transform 0.2s, translate 1s, box-shadow 0.2s;
-  box-shadow: 0 0 5px -1px #444;
+
 
   &:hover {
     transform: translateY(-4px);
   }
 
   &--selected {
-    box-shadow: 1px 1px 5px 2px #444;
+    box-shadow: 1px 1px 5px 2px var(--p-button-contrast-hover-border-color);
   }
 }
 </style>

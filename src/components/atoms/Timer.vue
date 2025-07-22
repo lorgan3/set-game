@@ -63,7 +63,7 @@ onUnmounted(() => {
 .timer {
   display: flex;
   align-items: baseline;
-  background: #e7e7e7;
+  background: var(--p-panel-header-border-color);
   padding: 3px 12px;
   border-radius: 32px;
   width: fit-content;
