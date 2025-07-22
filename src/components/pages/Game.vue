@@ -77,6 +77,19 @@ const handleGameEnd = () => {
   });
 };
 
+const handleReset = () => {
+  playArea.value.clear();
+
+  window.setTimeout(() => {
+    paused.value = true;
+    mode.value = undefined;
+
+    const deck = new Deck();
+    deck.shuffle();
+    playArea.value = new PlayArea(deck);
+  }, 1000);
+};
+
 const handleClick = (card: CardData) => {
   if (selectedCards.value.includes(card)) {
     selectedCards.value = selectedCards.value.filter((c) => c !== card);
@@ -163,6 +176,7 @@ const handleHint = () => {
           <h3>Score {{ score }}</h3>
           <span>
             <Timer
+              :key="mode"
               :paused="paused"
               :duration="mode === Mode.Timed ? 120 : 0"
               @end="handleGameEnd"
@@ -211,6 +225,7 @@ const handleHint = () => {
 
           <div class="buttons">
             <Button @click="handleHint">Hint</Button>
+            <Button @click="handleReset" severity="danger">Reset</Button>
           </div>
         </div>
       </Panel>

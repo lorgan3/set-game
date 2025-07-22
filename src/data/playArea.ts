@@ -60,6 +60,18 @@ export class PlayArea {
     }
   }
 
+  clear() {
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        delete this.area[x][y];
+      }
+    }
+
+    this._cardsInPlay = 0;
+    this._width = 0;
+    this._height = 0;
+  }
+
   fill() {
     this._width = Math.max(PlayArea.DEFAULT_WIDTH, this._width);
     this._height = Math.max(
