@@ -67,6 +67,7 @@ export class PlayArea {
       this._height
     );
 
+    let appearOrder = 0;
     if (this._cardsInPlay < PlayArea.DEFAULT_CARDS_IN_PLAY) {
       for (let x = 0; x < this.width; x++) {
         for (let y = 0; y < this.height; y++) {
@@ -75,6 +76,8 @@ export class PlayArea {
 
             if (card) {
               this.setCardAt(x, y, card);
+              card.setAppearOrder(appearOrder);
+              appearOrder++;
             }
           }
         }
@@ -82,27 +85,8 @@ export class PlayArea {
     }
 
     while (!this.getFirstSet() && this.cardsInDeck > 0) {
-      this.addColumn();
+      appearOrder = this.addColumn(appearOrder);
     }
-  }
-
-  private addColumn() {
-    const x = this.width;
-    this._width++;
-
-    for (let y = 0; y < this.height; y++) {
-      if (!this.getCardAt(x, y)) {
-        const card = this.deck.draw();
-
-        if (card) {
-          this.setCardAt(x, y, card);
-        }
-      }
-    }
-  }
-
-  private getCards() {
-    return this.area.flat().filter((card) => card !== undefined) as Card[];
   }
 
   getFirstSet() {
@@ -163,5 +147,28 @@ export class PlayArea {
         }
       }
     }
+  }
+
+  private getCards() {
+    return this.area.flat().filter((card) => card !== undefined) as Card[];
+  }
+
+  private addColumn(appearOrder = 0) {
+    const x = this.width;
+    this._width++;
+
+    for (let y = 0; y < this.height; y++) {
+      if (!this.getCardAt(x, y)) {
+        const card = this.deck.draw();
+
+        if (card) {
+          this.setCardAt(x, y, card);
+          card.setAppearOrder(appearOrder);
+          appearOrder++;
+        }
+      }
+    }
+
+    return appearOrder;
   }
 }

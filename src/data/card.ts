@@ -23,6 +23,8 @@ export enum Count {
 }
 
 export class Card {
+  public appearOrder = 0;
+
   constructor(
     public color: Color,
     public shape: Shape,
@@ -36,6 +38,10 @@ export class Card {
 
   key() {
     return this.properties.join("-");
+  }
+
+  setAppearOrder(order: number) {
+    this.appearOrder = order;
   }
 
   static isSet(cards: [Card, Card, Card]): boolean {

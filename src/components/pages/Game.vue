@@ -110,7 +110,7 @@ const handleClick = (card: CardData) => {
 
       window.setTimeout(() => {
         playArea.value.fill();
-      }, 500);
+      }, 700);
     } else {
       selectedCards.value = [];
       score.value = Math.max(0, score.value - 1);
@@ -200,7 +200,11 @@ const handleHint = () => {
                 :selected="selectedCards.includes(data.card)"
                 @click="!paused ? handleClick(data.card) : undefined"
                 class="open-card"
-                :style="{ '--x': data.x, '--y': data.y }"
+                :style="{
+                  '--x': data.x,
+                  '--y': data.y,
+                  '--appear-order': data.card.appearOrder,
+                }"
               />
             </TransitionGroup>
           </div>
@@ -294,6 +298,10 @@ const handleHint = () => {
 .cards-leave-active {
   z-index: 1;
   box-shadow: 1px 1px 5px 2px var(--p-button-contrast-hover-border-color);
+}
+
+.cards-leave-active {
+  transition-delay: 0;
 }
 
 .cards-enter-from,

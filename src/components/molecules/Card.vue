@@ -37,9 +37,14 @@ defineProps<{
   box-shadow: 0 0 5px -1px var(--p-button-contrast-hover-border-color);
   transition: transform 0.2s, translate 1s, box-shadow 0.2s;
 
+  &.cards-enter-active {
+    transition-delay: calc(var(--appear-order, 0) * 0.1s);
+  }
 
-  &:hover {
-    transform: translateY(-4px);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-4px);
+    }
   }
 
   &--selected {
