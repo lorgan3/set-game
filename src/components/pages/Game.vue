@@ -8,6 +8,7 @@ import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 import Timer from "../atoms/Timer.vue";
+import { enumKeys } from "../../data/util";
 
 enum Sound {
   Correct = "correct.mp3",
@@ -22,8 +23,27 @@ enum Mode {
   Timed,
 }
 
+const audioContext = new AudioContext();
+const sounds = {} as Record<Sound, AudioBuffer>;
+for (const key of enumKeys(Sound)) {
+  const sound = Sound[key];
+
+  fetch(`${import.meta.env.BASE_URL}${sound}`)
+    .then((res) => res.arrayBuffer())
+    .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
+    .then((audioBuffer) => {
+      sounds[sound] = audioBuffer;
+    });
+}
+
 const playSound = (sound: Sound) => {
-  new Audio(`${import.meta.env.BASE_URL}${sound}`).play();
+  if (sounds[sound]) {
+    const source = audioContext.createBufferSource();
+    source.buffer = sounds[sound];
+    source.connect(audioContext.destination);
+
+    source.start();
+  }
 };
 
 const toast = useToast();
