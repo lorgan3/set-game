@@ -3,7 +3,7 @@ import Page from "../atoms/Page.vue";
 import { Button, Panel } from "primevue";
 import Card from "../molecules/Card.vue";
 import { Deck } from "../../data/deck";
-import { computed, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
@@ -52,7 +52,7 @@ const toast = useToast();
 const deck = new Deck();
 deck.shuffle();
 
-const playArea = ref(new PlayArea(deck));
+const playArea = ref<PlayArea>() as Ref<PlayArea, PlayArea>;
 const selectedCards = ref<CardData[]>([]);
 const score = ref(0);
 const mode = ref<Mode | undefined>(undefined);
@@ -61,6 +61,10 @@ const paused = ref(true);
 const handleSelectMode = (newMode: Mode) => {
   mode.value = newMode;
   paused.value = false;
+
+  const deck = new Deck();
+  deck.shuffle();
+  playArea.value = new PlayArea(deck, newMode === Mode.Infinite);
 
   window.requestAnimationFrame(() => {
     playArea.value.fill();
@@ -79,15 +83,14 @@ const handleGameEnd = () => {
 };
 
 const handleReset = () => {
+  score.value = 0;
+  toast.removeAllGroups();
   playArea.value.clear();
+  playSound(Sound.Paper);
 
   window.setTimeout(() => {
     paused.value = true;
     mode.value = undefined;
-
-    const deck = new Deck();
-    deck.shuffle();
-    playArea.value = new PlayArea(deck);
   }, 1000);
 };
 
