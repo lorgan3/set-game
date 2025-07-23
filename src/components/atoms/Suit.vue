@@ -76,15 +76,15 @@ defineProps<{
   }
 
   &.color-0 div {
-    background-color: #ec1212;
+    background-color: var(--p-button-danger-background);
   }
 
   &.color-1 div {
-    background-color: #0da10d;
+    background-color: var(--p-button-primary-background);
   }
 
   &.color-2 div {
-    background-color: #c010c0;
+    background-color: var(--p-button-help-hover-background);
   }
 
   &.fill-0 .shape {
