@@ -10,7 +10,7 @@ export class PlayArea {
   private _height = 0;
   private _cardsInPlay = 0;
 
-  constructor(private deck: Deck) {}
+  constructor(private deck: Deck, private recycleCards: boolean) {}
 
   get width() {
     return this._width;
@@ -123,6 +123,10 @@ export class PlayArea {
     }
 
     this.compact();
+
+    if (this.recycleCards) {
+      this.deck.insert(cards, true);
+    }
   }
 
   private compact() {

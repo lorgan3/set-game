@@ -28,6 +28,17 @@ export class Deck {
     return this.cards.pop();
   }
 
+  insert(cards: Card[], random = false) {
+    if (!random) {
+      this.cards.unshift(...cards);
+      return;
+    }
+
+    for (let card of cards) {
+      this.cards.splice(Math.floor(Math.random() * this.cards.length), 0, card);
+    }
+  }
+
   shuffle() {
     let currentIndex = this.cards.length;
     let temporaryValue: Card;
