@@ -191,8 +191,8 @@ const handleHint = () => {
             <div>
               <Button @click="handleSelectMode(Mode.Normal)">Normal</Button>
               <p>
-                Try finding all sets of 3 cards that either share have no common
-                attributes or all have the same attribute.
+                Try finding all sets of 3 cards that all either have the same
+                attribute or a different attribute.
               </p>
             </div>
             <div>
