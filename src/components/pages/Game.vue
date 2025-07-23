@@ -21,6 +21,7 @@ enum Sound {
 enum Mode {
   Normal,
   Timed,
+  Infinite,
 }
 
 const audioContext = new AudioContext();
@@ -173,7 +174,7 @@ const handleHint = () => {
     <div class="void">
       <Panel>
         <div class="score">
-          <h3>Score {{ score }}</h3>
+          <h3>Score: {{ score }}</h3>
           <span>
             <Timer
               :key="mode"
@@ -182,7 +183,9 @@ const handleHint = () => {
               @end="handleGameEnd"
             />
           </span>
-          <span class="right">Cards in deck {{ playArea.cardsInDeck }}</span>
+          <span class="right"
+            >Cards in deck: {{ playArea?.cardsInDeck || 0 }}</span
+          >
         </div>
 
         <div v-if="mode === undefined" class="mode-select">
@@ -196,9 +199,20 @@ const handleHint = () => {
               </p>
             </div>
             <div>
-              <Button @click="handleSelectMode(Mode.Timed)">Timed</Button>
+              <Button @click="handleSelectMode(Mode.Timed)" severity="danger"
+                >Timed</Button
+              >
               <p>
                 Try finding as many sets within the time limit of 2 minutes.
+              </p>
+            </div>
+            <div>
+              <Button @click="handleSelectMode(Mode.Infinite)" severity="help"
+                >Infinite</Button
+              >
+              <p>
+                Play as long as you like, found sets are shuffled back into the
+                deck.
               </p>
             </div>
           </div>
@@ -293,6 +307,12 @@ const handleHint = () => {
     display: flex;
     padding-top: 20px;
     gap: 20px;
+
+    @media (max-width: 720px) {
+      flex-direction: column;
+      text-align: center;
+      max-width: 400px;
+    }
 
     & > * {
       flex: 1;
