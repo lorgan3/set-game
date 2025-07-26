@@ -9,6 +9,8 @@ import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 import Timer from "../atoms/Timer.vue";
 import { enumKeys } from "../../data/util";
+import { Mode } from "../../data/game";
+import { increaseScoreCount, saveScore, Score } from "../../data/score";
 
 enum Sound {
   Correct = "correct.mp3",
@@ -16,12 +18,7 @@ enum Sound {
   Paper = "paper.wav",
   Select = "select.wav",
   Ding = "ding.wav",
-}
-
-enum Mode {
-  Normal,
-  Timed,
-  Infinite,
+  GameOver = "gameOver.wav",
 }
 
 const audioContext = new AudioContext();
@@ -72,14 +69,26 @@ const handleSelectMode = (newMode: Mode) => {
   });
 };
 
-const handleGameEnd = () => {
+const handleGameEnd = (time: number) => {
   paused.value = true;
 
-  playSound(Sound.Ding);
+  playSound(mode.value === Mode.Timed ? Sound.Ding : Sound.GameOver);
   toast.add({
     summary: "Game over!",
     severity: "info",
   });
+
+  const scoreData: Score = {
+    date: new Date(),
+    score: score.value,
+    time,
+    hints: 0,
+  };
+
+  saveScore(mode.value!, scoreData);
+  if (mode.value === Mode.Normal) {
+    increaseScoreCount(scoreData);
+  }
 };
 
 const handleReset = () => {
@@ -115,14 +124,11 @@ const handleClick = (card: CardData) => {
         life: 3000,
         severity: "success",
       });
-      playSound(Sound.Correct);
 
       if (!playArea.value.getFirstSet() && playArea.value.cardsInDeck === 0) {
         paused.value = true;
-        toast.add({
-          summary: "Game over!",
-          severity: "info",
-        });
+      } else {
+        playSound(Sound.Correct);
       }
 
       window.setTimeout(() => {

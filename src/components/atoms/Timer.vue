@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 const props = defineProps<{
   paused: boolean;
   duration?: number;
-  onEnd?: () => void;
+  onEnd?: (time: number) => void;
 }>();
 
 const time = ref(props.duration || 0);
@@ -18,6 +18,15 @@ watch(
   }
 );
 
+watch(
+  () => props.paused,
+  (newPaused) => {
+    if (newPaused === true && time.value > 0) {
+      props.onEnd?.(time.value);
+    }
+  }
+);
+
 const update = () => {
   if (props.paused) {
     return;
@@ -27,7 +36,7 @@ const update = () => {
     time.value--;
 
     if (time.value === 0) {
-      props.onEnd?.();
+      props.onEnd?.(0);
     }
     return;
   }
