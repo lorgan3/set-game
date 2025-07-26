@@ -46,14 +46,13 @@ const playSound = (sound: Sound) => {
 
 const toast = useToast();
 
-const deck = new Deck();
-deck.shuffle();
-
 const playArea = ref<PlayArea>() as Ref<PlayArea, PlayArea>;
 const selectedCards = ref<CardData[]>([]);
 const score = ref(0);
 const mode = ref<Mode | undefined>(undefined);
 const paused = ref(true);
+const hints = ref(0);
+const lastHint = ref<CardData>();
 
 const handleSelectMode = (newMode: Mode) => {
   mode.value = newMode;
@@ -82,7 +81,7 @@ const handleGameEnd = (time: number) => {
     date: new Date(),
     score: score.value,
     time,
-    hints: 0,
+    hints: hints.value,
   };
 
   saveScore(mode.value!, scoreData);
@@ -93,6 +92,8 @@ const handleGameEnd = (time: number) => {
 
 const handleReset = () => {
   score.value = 0;
+  hints.value = 0;
+  lastHint.value = undefined;
   toast.removeAllGroups();
   playArea.value.clear();
   playSound(Sound.Paper);
@@ -111,6 +112,7 @@ const handleClick = (card: CardData) => {
   }
 
   if (selectedCards.value.length === 3) {
+    lastHint.value = undefined;
     const isSet = CardData.isSet(
       selectedCards.value as [CardData, CardData, CardData]
     );
@@ -163,17 +165,14 @@ const cardPositions = computed(() => {
 });
 
 const handleHint = () => {
-  const set = playArea.value.getFirstSet();
+  if (!lastHint.value) {
+    hints.value++;
 
-  if (set) {
-    selectedCards.value = [set[0]];
-  } else {
-    toast.add({
-      summary: "No more sets, draw some cards!",
-      life: 3000,
-      severity: "info",
-    });
+    const set = playArea.value.getFirstSet()!;
+    lastHint.value = set[Math.floor(Math.random() * set.length)];
   }
+
+  selectedCards.value = [lastHint.value];
 };
 </script>
 
@@ -235,7 +234,11 @@ const handleHint = () => {
                 :key="data.card.key()"
                 :card="data.card"
                 :selected="selectedCards.includes(data.card)"
-                @click="!paused ? handleClick(data.card) : undefined"
+                @click="
+                  !paused && data.card !== lastHint
+                    ? handleClick(data.card)
+                    : undefined
+                "
                 class="open-card"
                 :style="{
                   '--x': data.x,
