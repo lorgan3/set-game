@@ -46,9 +46,11 @@ export const saveScore = (mode: Mode, score: Score) => {
   }
 
   if (mode === Mode.Normal) {
-    scores.sort((a, b) => a.time - b.time);
+    scores.sort(
+      (a, b) => a.time - b.time || b.score - a.score || a.hints - b.hints
+    );
   } else {
-    scores.sort((a, b) => a.score - b.score);
+    scores.sort((a, b) => b.score - a.score || a.hints - b.hints);
   }
 
   try {
