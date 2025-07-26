@@ -9,8 +9,16 @@ import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 import Timer from "../atoms/Timer.vue";
 import { enumKeys } from "../../data/util";
-import { Mode } from "../../data/game";
-import { increaseScoreCount, saveScore, Score } from "../../data/score";
+import { CHART_COLORS, Mode } from "../../data/game";
+import {
+  increaseScoreCount,
+  loadScoreCount,
+  loadScores,
+  saveScore,
+  Score,
+} from "../../data/score";
+import Scores from "../molecules/Scores.vue";
+import PieChart from "../atoms/PieChart.vue";
 
 enum Sound {
   Correct = "correct.mp3",
@@ -54,6 +62,9 @@ const paused = ref(true);
 const hints = ref(0);
 const lastHint = ref<CardData>();
 
+const scores = ref(loadScores());
+const scoreCount = ref(loadScoreCount());
+
 const handleSelectMode = (newMode: Mode) => {
   mode.value = newMode;
   paused.value = false;
@@ -84,9 +95,9 @@ const handleGameEnd = (time: number) => {
     hints: hints.value,
   };
 
-  saveScore(mode.value!, scoreData);
+  scores.value = saveScore(mode.value!, scoreData);
   if (mode.value === Mode.Normal) {
-    increaseScoreCount(scoreData);
+    scoreCount.value = increaseScoreCount(scoreData);
   }
 };
 
@@ -174,6 +185,18 @@ const handleHint = () => {
 
   selectedCards.value = [lastHint.value];
 };
+
+const pieTotal = computed(() =>
+  Object.values(scoreCount.value).reduce((acc, value) => acc + value, 0)
+);
+
+const pieParts = computed(() =>
+  Object.entries(scoreCount.value).map(([key, value], index) => ({
+    label: `${value}x${key} points`,
+    value,
+    color: CHART_COLORS[index],
+  }))
+);
 </script>
 
 <template>
@@ -256,10 +279,33 @@ const handleHint = () => {
         </div>
       </Panel>
     </div>
+    <Panel v-if="pieTotal" header="High scores" toggleable>
+      <div class="high-scores">
+        <div class="pie-wrapper">
+          <PieChart
+            :parts="pieParts"
+            :centerLabel="`${pieTotal} normal games played`"
+          />
+        </div>
+        <div class="scores-wrapper">
+          <Scores
+            v-if="scores[Mode.Normal].length"
+            title="Normal"
+            :score="scores[Mode.Normal]"
+            includeTime
+          />
+          <Scores
+            v-if="scores[Mode.Timed].length"
+            title="Timed"
+            :score="scores[Mode.Timed]"
+          />
+        </div>
+      </div>
+    </Panel>
   </Page>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .play-area {
   --card-width: 79px;
   --card-height: 110px;
@@ -276,6 +322,7 @@ const handleHint = () => {
 
 .void {
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .buttons {
@@ -338,6 +385,27 @@ const handleHint = () => {
       color: #999;
       font-style: italic;
     }
+  }
+}
+
+.high-scores {
+  display: flex;
+  gap: 20px;
+
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
+
+  .pie-wrapper {
+    flex: 1;
+    max-width: 500px;
+  }
+
+  .scores-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
   }
 }
 
