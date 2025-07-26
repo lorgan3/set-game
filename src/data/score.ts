@@ -28,11 +28,11 @@ export const loadScores = () => {
 };
 
 export const saveScore = (mode: Mode, score: Score) => {
+  const allScores = loadScores();
   if (mode === Mode.Infinite) {
-    return;
+    return allScores;
   }
 
-  const allScores = loadScores();
   const scores = allScores[mode];
   const lowestScore = scores.at(-1);
 
@@ -56,6 +56,8 @@ export const saveScore = (mode: Mode, score: Score) => {
   try {
     localStorage.setItem(SCORE_KEY, JSON.stringify(allScores));
   } catch {}
+
+  return allScores;
 };
 
 export const loadScoreCount = () => {
@@ -78,4 +80,6 @@ export const increaseScoreCount = (score: Score) => {
   try {
     localStorage.setItem(SCORE_COUNT_KEY, JSON.stringify(scoreCount));
   } catch {}
+
+  return scoreCount;
 };
