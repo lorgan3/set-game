@@ -204,7 +204,7 @@ const pieParts = computed(() =>
     <h1>Set</h1>
     <div class="void">
       <Panel>
-        <div class="score">
+        <div v-if="mode !== undefined" class="score">
           <h3>Score: {{ score }}</h3>
           <span>
             <Timer
