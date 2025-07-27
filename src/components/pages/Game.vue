@@ -313,6 +313,10 @@ const pieParts = computed(() =>
   --card-height: 110px;
   --max-width: calc(150px * var(--columns));
   --width: calc(min(100cqw, var(--max-width)) / var(--columns));
+  --card-overlap: max(
+    0px,
+    calc((var(--card-width) - var(--width))) / var(--columns)
+  );
   --height: calc(var(--card-height) + 30px);
   --margin: max(0px, calc((100cqw - var(--max-width)) / 2));
 
@@ -337,8 +341,8 @@ const pieParts = computed(() =>
   top: 0;
   left: 0;
   translate: calc(
-      var(--x) * var(--width) + max(0px, (var(--width) - var(--card-width)) / 2) +
-        var(--margin)
+      var(--x) * (var(--width) - var(--card-overlap)) +
+        max(0px, (var(--width) - var(--card-width)) / 2) + var(--margin)
     )
     calc(var(--y) * var(--height) + 15px);
 }
