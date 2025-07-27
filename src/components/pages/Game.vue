@@ -125,12 +125,12 @@ const handleClick = (card: CardData) => {
   }
 
   if (selectedCards.value.length === 3) {
-    lastHint.value = undefined;
     const isSet = CardData.isSet(
       selectedCards.value as [CardData, CardData, CardData]
     );
 
     if (isSet) {
+      lastHint.value = undefined;
       playArea.value.removeSet(selectedCards.value);
       selectedCards.value = [];
       score.value++;
