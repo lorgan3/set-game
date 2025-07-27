@@ -105,6 +105,8 @@ const handleReset = () => {
   score.value = 0;
   hints.value = 0;
   lastHint.value = undefined;
+  selectedCards.value = [];
+
   toast.removeAllGroups();
   playArea.value.clear();
   playSound(Sound.Paper);
