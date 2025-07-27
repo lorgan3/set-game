@@ -417,7 +417,7 @@ const pieParts = computed(() =>
 
 .cards-enter-active,
 .cards-leave-active {
-  z-index: 1;
+  z-index: calc(1 + var(--appear-order, 0));
   box-shadow: 1px 1px 5px 2px var(--p-button-contrast-hover-border-color);
 }
 
@@ -427,7 +427,9 @@ const pieParts = computed(() =>
 
 .cards-enter-from,
 .cards-leave-to {
-  translate: calc((min(100cqw, var(--max-width))) / 2 + var(--margin))
+  translate: calc(
+      (min(100cqw, var(--max-width)) - var(--card-width)) / 2 + var(--margin)
+    )
     calc(var(--height) * 3 + 100px);
 }
 </style>
