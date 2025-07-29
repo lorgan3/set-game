@@ -33,6 +33,11 @@ const gradient = computed(() => {
     return CHART_COLORS[0];
   }
 
+  // Samsung browser does not support 1 color stop https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/conic-gradient
+  if (mappedParts.value.length === 1) {
+    return mappedParts.value[0].color;
+  }
+
   return `conic-gradient(${mappedParts.value
     .map((part, i) => {
       if (i === 0) {
