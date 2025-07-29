@@ -53,6 +53,8 @@ export const saveScore = (mode: Mode, score: Score) => {
     scores.sort((a, b) => b.score - a.score || a.hints - b.hints);
   }
 
+  allScores[mode] = scores.slice(0, MAX_SCORES);
+
   try {
     localStorage.setItem(SCORE_KEY, JSON.stringify(allScores));
   } catch {}
