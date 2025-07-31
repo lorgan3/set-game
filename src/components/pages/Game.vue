@@ -18,6 +18,7 @@ import {
 } from "../../data/score";
 import Scores from "../molecules/Scores.vue";
 import PieChart from "../atoms/PieChart.vue";
+import Tutorial from "../organisms/Tutorial.vue";
 import { playSound, Sound } from "../../data/sound";
 
 const toast = useToast();
@@ -189,15 +190,17 @@ const pieParts = computed(() =>
           >
         </div>
 
-        <div v-if="mode === undefined" class="mode-select">
+        <section v-if="mode === undefined">
+          <h2>How to play</h2>
+          <Tutorial />
+        </section>
+
+        <section v-if="mode === undefined">
           <h2>Select Mode</h2>
           <div class="modes">
             <div>
               <Button @click="handleSelectMode(Mode.Normal)">Normal</Button>
-              <p>
-                Try finding all sets of 3 cards that all either have the same
-                attribute or a different attribute.
-              </p>
+              <p>Try finding all sets as fast as possible.</p>
             </div>
             <div>
               <Button @click="handleSelectMode(Mode.Timed)" severity="danger"
@@ -217,7 +220,7 @@ const pieParts = computed(() =>
               </p>
             </div>
           </div>
-        </div>
+        </section>
 
         <div v-else>
           <div class="play-area" :style="{ '--columns': playArea.width }">
@@ -276,9 +279,15 @@ const pieParts = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-.play-area {
+.void {
   --card-width: 79px;
   --card-height: 110px;
+
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.play-area {
   --max-width: calc(150px * var(--columns));
   --width: calc(min(100cqw, var(--max-width)) / var(--columns));
   --card-overlap: max(
@@ -292,11 +301,6 @@ const pieParts = computed(() =>
   container-type: inline-size;
   height: calc(var(--height) * 3);
   transform-origin: 50% 0;
-}
-
-.void {
-  overflow: hidden;
-  margin-bottom: 20px;
 }
 
 .buttons {
@@ -330,35 +334,35 @@ const pieParts = computed(() =>
   }
 }
 
-.mode-select {
+section {
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
+}
 
-  .modes {
-    display: flex;
-    padding-top: 20px;
-    gap: 20px;
+.modes {
+  display: flex;
+  gap: 20px;
 
-    @media (max-width: 720px) {
-      flex-direction: column;
-      text-align: center;
-      max-width: 400px;
-    }
+  @media (max-width: 720px) {
+    flex-direction: column;
+    text-align: center;
+    max-width: 400px;
+  }
 
-    & > * {
-      flex: 1;
-    }
+  & > * {
+    flex: 1;
+  }
 
-    button {
-      margin-bottom: 10px;
-    }
+  button {
+    margin-bottom: 10px;
+  }
 
-    p {
-      color: #999;
-      font-style: italic;
-    }
+  p {
+    color: #999;
+    font-style: italic;
   }
 }
 
