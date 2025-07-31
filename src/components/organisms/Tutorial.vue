@@ -29,7 +29,7 @@ const handleCreateSet = () => {
 <template>
   <div class="tutorial">
     <p>
-      Set is a card game where every card has 4 properties with 3 possible
+      Set is a card game where every card has 4 attributes with 3 possible
       values resulting in 3x3x3x3 = 81 possible combinations.
     </p>
     <p>
