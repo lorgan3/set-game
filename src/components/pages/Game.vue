@@ -8,7 +8,6 @@ import { PlayArea } from "../../data/playArea";
 import { Card as CardData } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 import Timer from "../atoms/Timer.vue";
-import { enumKeys } from "../../data/util";
 import { CHART_COLORS, Mode } from "../../data/game";
 import {
   increaseScoreCount,
@@ -19,38 +18,7 @@ import {
 } from "../../data/score";
 import Scores from "../molecules/Scores.vue";
 import PieChart from "../atoms/PieChart.vue";
-
-enum Sound {
-  Correct = "correct.mp3",
-  Wrong = "wrong.wav",
-  Paper = "paper.wav",
-  Select = "select.wav",
-  Ding = "ding.wav",
-  GameOver = "gameOver.wav",
-}
-
-const audioContext = new AudioContext();
-const sounds = {} as Record<Sound, AudioBuffer>;
-for (const key of enumKeys(Sound)) {
-  const sound = Sound[key];
-
-  fetch(`${import.meta.env.BASE_URL}${sound}`)
-    .then((res) => res.arrayBuffer())
-    .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
-    .then((audioBuffer) => {
-      sounds[sound] = audioBuffer;
-    });
-}
-
-const playSound = (sound: Sound) => {
-  if (sounds[sound]) {
-    const source = audioContext.createBufferSource();
-    source.buffer = sounds[sound];
-    source.connect(audioContext.destination);
-
-    source.start();
-  }
-};
+import { playSound, Sound } from "../../data/sound";
 
 const toast = useToast();
 
