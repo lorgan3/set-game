@@ -51,6 +51,10 @@ const handleSelectMode = (newMode: Mode) => {
 const handleGameEnd = (time: number) => {
   paused.value = true;
 
+  if (score.value === 0) {
+    return;
+  }
+
   playSound(mode.value === Mode.Timed ? Sound.Ding : Sound.GameOver);
   toast.add({
     summary: "Game over!",
