@@ -57,7 +57,7 @@ const gradient = computed(() => {
 </script>
 
 <template>
-  <div class="pie-chart" :style="{ width: size, 'background-image': gradient }">
+  <div class="pie-chart" :style="{ width: size, background: gradient }">
     <div
       v-for="part in mappedParts"
       class="part"
