@@ -121,6 +121,11 @@ const handleClick = (card: CardData) => {
 
       window.setTimeout(() => {
         playArea.value.fill();
+
+        // It's possible for the last drawn cards to no longer contain a set
+        if (!playArea.value.getFirstSet()) {
+          paused.value = true;
+        }
       }, 700);
     } else {
       selectedCards.value = [];
