@@ -24,8 +24,16 @@ export enum Count {
   Three,
 }
 
+export enum PropertyEvaluation {
+  AllEqual,
+  AllDifferent,
+  Mixed,
+}
+
 export class Card {
   public appearOrder = 0;
+
+  static propertyNames = ["color", "shape", "fill", "count"];
 
   constructor(
     public color: Color,
@@ -57,7 +65,7 @@ export class Card {
     return true;
   }
 
-  static isSet(cards: [Card, Card, Card]): boolean {
+  static isSet(cards: [Card, Card, Card]) {
     const sums = cards.reduce(
       (sums, card) => {
         card.properties.forEach((property, index) => {
@@ -69,6 +77,26 @@ export class Card {
     );
 
     return sums.every((sum) => sum % 3 === 0);
+  }
+
+  static evaluateSet(cards: [Card, Card, Card]) {
+    const cardProperties = cards.map((card) => card.properties);
+    const properties = new Array(4)
+      .fill(0)
+      .map((_, i) => cardProperties.map((props) => props[i]));
+
+    return properties.map((props) => {
+      if (props.every((prop) => prop === props[0])) {
+        return PropertyEvaluation.AllEqual;
+      }
+
+      const sum = props.reduce((sum, prop) => sum + prop, 0);
+      if (sum % 3 === 0) {
+        return PropertyEvaluation.AllDifferent;
+      }
+
+      return PropertyEvaluation.Mixed;
+    });
   }
 
   static createSetCard(cards: [Card, Card]) {
