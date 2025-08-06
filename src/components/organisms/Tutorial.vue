@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, TransitionGroup } from "vue";
-import { Card as CardData } from "../../data/card";
+import { computed, onMounted, ref, Transition, TransitionGroup } from "vue";
+import { Card as CardData, PropertyEvaluation } from "../../data/card";
 import Card from "../molecules/Card.vue";
 import { playSound, Sound } from "../../data/sound";
 
@@ -24,6 +24,24 @@ const handleCreateSet = () => {
   exampleSet.value = createSet();
   playSound(Sound.Correct);
 };
+
+const setString = computed(() => {
+  if (exampleSet.value.length === 0) {
+    return "";
+  }
+
+  const evaluation = CardData.evaluateSet(
+    exampleSet.value as [CardData, CardData, CardData]
+  );
+  return evaluation
+    .map(
+      (result, index) =>
+        `${result === PropertyEvaluation.AllEqual ? "same" : "different"} ${
+          CardData.propertyNames[index]
+        }`
+    )
+    .join(", ");
+});
 </script>
 
 <template>
@@ -52,6 +70,9 @@ const handleCreateSet = () => {
           }"
         />
       </TransitionGroup>
+      <Transition
+        ><p :key="setString" class="set-string">{{ setString }}</p></Transition
+      >
     </div>
   </div>
 </template>
@@ -61,7 +82,7 @@ const handleCreateSet = () => {
   text-align: center;
   text-wrap: balance;
   position: relative;
-  padding-bottom: calc(var(--card-height) + 15px);
+  padding-bottom: calc(var(--card-height) + 50px);
   container-type: inline-size;
   width: 100%;
 
@@ -78,13 +99,21 @@ const handleCreateSet = () => {
 
     .example-card {
       position: absolute;
-      bottom: 0;
+      bottom: 35px;
       left: 0;
       translate: calc(
           var(--x) * (var(--width) - var(--card-overlap)) +
             max(0px, (var(--width) - var(--card-width)) / 2) + var(--margin)
         )
         0;
+    }
+
+    .set-string {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 0.8em;
     }
 
     .cards-enter-active,
@@ -98,6 +127,20 @@ const handleCreateSet = () => {
 
     .cards-leave-to {
       translate: calc(100cqw + var(--card-width)) 0;
+    }
+
+    .v-enter-active,
+    .v-leave-active {
+      transition: opacity 0.4s ease;
+    }
+
+    .v-enter-active {
+      transition-delay: 0.2s;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+      opacity: 0;
     }
   }
 }

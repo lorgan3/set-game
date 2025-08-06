@@ -5,7 +5,7 @@ import Card from "../molecules/Card.vue";
 import { Deck } from "../../data/deck";
 import { computed, Ref, ref } from "vue";
 import { PlayArea } from "../../data/playArea";
-import { Card as CardData } from "../../data/card";
+import { Card as CardData, PropertyEvaluation } from "../../data/card";
 import { useToast } from "primevue/usetoast";
 import Timer from "../atoms/Timer.vue";
 import { CHART_COLORS, Mode } from "../../data/game";
@@ -128,10 +128,20 @@ const handleClick = (card: CardData) => {
         }
       }, 700);
     } else {
-      selectedCards.value = [];
+      const mistakes = CardData.evaluateSet(
+        selectedCards.value as [CardData, CardData, CardData]
+      )
+        .map((evaluation, index) => [evaluation, CardData.propertyNames[index]])
+        .filter(([evaluation]) => evaluation === PropertyEvaluation.Mixed);
+
+      selectedCards.value = lastHint.value ? [lastHint.value] : [];
       score.value = Math.max(0, score.value - 1);
+
       toast.add({
         summary: "This was NOT a set!",
+        detail: `incorrect properties: ${mistakes
+          .map(([_, property]) => property)
+          .join(", ")}`,
         life: 3000,
         severity: "error",
       });
@@ -372,6 +382,7 @@ section {
   p {
     color: #999;
     font-style: italic;
+    font-size: 0.8em;
   }
 }
 
