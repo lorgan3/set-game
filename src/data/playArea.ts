@@ -131,13 +131,15 @@ export class PlayArea {
 
   private compact() {
     if (
-      this.cardsInPlay > PlayArea.DEFAULT_CARDS_IN_PLAY ||
+      this.cardsInPlay > (this.width - 1) * this.height ||
       this.width === PlayArea.DEFAULT_WIDTH
     ) {
       return;
     }
 
-    for (let x = 0; x < this.width; x++) {
+    const newWidth = Math.ceil(this.cardsInPlay / this._height);
+
+    for (let x = 0; x < newWidth; x++) {
       for (let y = 0; y < this.height; y++) {
         if (!this.getCardAt(x, y)) {
           const card = this.getOutOfBoundsCard();
@@ -152,12 +154,12 @@ export class PlayArea {
       }
     }
 
-    this._width = Math.ceil(this.cardsInPlay / this._height);
+    this._width = newWidth;
   }
 
   private getOutOfBoundsCard() {
-    for (let x = PlayArea.DEFAULT_WIDTH; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
+    for (let x = this.width - 1; x >= PlayArea.DEFAULT_WIDTH; x--) {
+      for (let y = this.height - 1; y >= 0; y--) {
         if (this.getCardAt(x, y)) {
           return this.getCardAt(x, y);
         }
